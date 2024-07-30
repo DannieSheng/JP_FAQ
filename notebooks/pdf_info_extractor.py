@@ -29,8 +29,8 @@ from pdf2image import convert_from_path
 
 # COMMAND ----------
 
-path_pdf = "/Workspace/Users/dsheng3@its.jnj.com/github/JP_FAQ/data/JP Label/stelara iv Japanese PI.pdf"
-# path_pdf = "/Workspace/Users/dsheng3@its.jnj.com/github/JP_FAQ/data/JP Label/stelara sc Japanese PI.pdf"
+# path_pdf = "/Workspace/Users/dsheng3@its.jnj.com/github/JP_FAQ/data/JP Label/stelara iv Japanese PI.pdf"
+path_pdf = "/Workspace/Users/dsheng3@its.jnj.com/github/JP_FAQ/data/JP Label/stelara sc Japanese PI.pdf"
 filename = path_pdf.split("/")[-1].split(".pdf")[0]
 dir_images = "/Workspace/Users/dsheng3@its.jnj.com/github/JP_FAQ/JP Label images/"
 if not os.path.exists(dir_images):
@@ -47,40 +47,54 @@ for page in doc: # iterate the document pages
 # COMMAND ----------
 
 tbs = {}
+bboxes = {}
 n = 1
 for page in doc:
     tbs[f"page {n}"] = []
+    bboxes[f"page {n}"] = []
     print(f"Page {n}:")
     n_tb = 0
-    for tb in page.find_tables():
+    for tb in page.find_tables(vertical_strategy="lines_strict", horizontal_strategy="lines_strict", snap_x_tolerance=1): 
+        # print(len(tb.cells))
         n_tb += 1
         tbs[f"page {n}"].append(tb.extract())
+        bboxes[f"page {n}"].append(tb.bbox) # x0, y0, x1, y1
     n += 1
     print(f"{n_tb} tables")
 
 # COMMAND ----------
 
+tbs['page 1'][2]
+
+# COMMAND ----------
+
+bboxes['page 3']
+
+# COMMAND ----------
+
+tb.to_markdown()
+
+# COMMAND ----------
+
+tb.to_pandas()
+
+# COMMAND ----------
+
+# i = 0
+# tbs_i = []
+# page = doc[i]
+# for tb in page.find_tables(vertical_strategy="lines_strict", horizontal_strategy="lines_strict", snap_x_tolerance=1): #, snap_y_tolerance=10):#):
+#     tbs_i.append(tb.extract())
+# print(f"page {i+1}: {len(tbs_i)} tables")
+# tbs_i
+
+# COMMAND ----------
+
+tbs['page 1'][2]
+
+# COMMAND ----------
+
 tbs["page 3"]
-
-# COMMAND ----------
-
-import fitz
-
-doc = fitz.open(path_pdf)
-
-page_number = 0  # The page number to manipulate annotations
-page = doc[page_number]
-
-annotations = page.get_page_info().get("Annots")
-annotations
-
-# COMMAND ----------
-
-page.annots()
-
-# COMMAND ----------
-
-page.annots()
 
 # COMMAND ----------
 
@@ -92,7 +106,7 @@ import re
 
 text = "\n".join(texts)
 result = {}
-# current_key = ''
+current_key = ''
 lines = text.splitlines()
 for line in lines:
     section_match = re.match(r'^(\d+\.\s+.+)', line)
@@ -110,7 +124,19 @@ result.keys()
 
 # COMMAND ----------
 
-text
+result['4. 効能又は効果']
+
+# COMMAND ----------
+
+result['5. 効能又は効果に関連する注意']
+
+# COMMAND ----------
+
+result['6. 用法及び用量']
+
+# COMMAND ----------
+
+texts[0]
 
 # COMMAND ----------
 
