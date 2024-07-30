@@ -1,30 +1,7 @@
-# %% [markdown]
-# Databricks notebook source  
-# MAGIC %pip install -r "/Workspace/Users/dsheng3@its.jnj.com/github/JP_FAQ/requirements.txt"  
-# MAGIC %pip install "unstructured[all-docs]"  
-
-# %% [markdown]
-# COMMAND ----------
-
-# %% [markdown]
-# In terminal:  
-# ```
-# sudo apt-get update
-# sudo apt-get install poppler-utils tesseract-ocr
-# ```
-
-# %% [markdown]
-# COMMAND ----------
-
-# %%
-# dbutils.library.restartPython() 
-
-# %% [markdown]
-# COMMAND ----------
-
 # %%
 import os
 from unstructured.partition.pdf import partition_pdf
+
 
 # Get the current working directory
 current_working_directory = os.getcwd()
@@ -32,33 +9,21 @@ current_working_directory = os.getcwd()
 print(current_working_directory)
 
 # %%
-notebook_path = os.path.abspath('__file__')
-notebook_directory = os.path.dirname(notebook_path)
-
-print(notebook_directory)
-
-# %% [markdown]
-# COMMAND ----------
-
-# %%
 from unstructured_inference.models.tables import cells_to_html
 
-# %% [markdown]
-# COMMAND ----------
-
 # %%
-path_pdf = "../data/JP Label/stelara iv Japanese PI.pdf"
+path_pdf = "data/JP Label/stelara iv Japanese PI.pdf"
 # path_pdf = "/Workspace/Users/dsheng3@its.jnj.com/github/JP_FAQ/data/JP Label/stelara sc Japanese PI.pdf"
 filename = path_pdf.split("/")[-1].split(".pdf")[0]
-dir_partitions = "../output/JP Label images partition/"
+dir_partitions = "output/JP Label images partition/"
 if not os.path.exists(dir_partitions):
     os.makedirs(dir_partitions)
 
-# %% [markdown]
-# COMMAND ----------
+# %%
+import nltk
 
 # %%
-pwd
+nltk.download('punkt')
 
 # %%
 raw_pdf_elements = partition_pdf(
@@ -75,11 +40,6 @@ raw_pdf_elements = partition_pdf(
     )
 
 # %%
-
-# %% [markdown]
-# COMMAND ----------
-
-# %%
 print(f"In total {len(raw_pdf_elements)} elements")
 print(f"Categories of all elements are: {set([ele.category for ele in raw_pdf_elements])}")
 
@@ -90,26 +50,14 @@ for ele in raw_pdf_elements:
         tables.append(ele)
 print(f"{len(tables)} tables")
 
-# %% [markdown]
-# COMMAND ----------
-
 # %%
 print(tables[-1].metadata.text_as_html)
-
-# %% [markdown]
-# COMMAND ----------
 
 # %%
 dir(tables[0].metadata)
 
-# %% [markdown]
-# COMMAND ----------
-
 # %%
 tables[0].metadata.page_number
-
-# %% [markdown]
-# COMMAND ----------
 
 # %%
 tables[0].metadata.fields

@@ -2,3 +2,5 @@ PyMuPDF
 pdf2image
 unstructured[all-docs]
 pdfminer
+tesseract-ocr-utils
+pytesseract
